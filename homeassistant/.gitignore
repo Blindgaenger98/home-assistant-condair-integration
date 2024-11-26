@@ -1,9 +1,3 @@
-/components
-/brands
-/backports
-/auth
-/generated
-/helpers
-/scripts
-/util
-/*.py
+/*
+!.gitignore
+!custom_components/*
