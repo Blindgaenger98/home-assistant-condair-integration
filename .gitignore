@@ -2,6 +2,7 @@
 !.gitignore
 !homeassistant/
 !tests/
+!.pre-commit-config.yaml
 
 /config
 config2/*
