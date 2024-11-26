@@ -1,1 +1,1 @@
-"""Tests for the Condair integration. Change."""
+"""Tests for the Condair integration."""
