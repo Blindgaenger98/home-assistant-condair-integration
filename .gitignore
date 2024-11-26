@@ -1,8 +1,11 @@
-/*
-!.gitignore
-!homeassistant/*
-!tests/*
-!.pre-commit-config.yaml
+/build
+/.vscode
+.ruff_cache
+/machine
+/script
+/.core_files.yaml
+/pylint
+/rootfs
 
 /config
 config2/*
