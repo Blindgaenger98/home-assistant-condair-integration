@@ -1,7 +1,7 @@
 /*
 !.gitignore
-!homeassistant/
-!tests/
+!homeassistant/custom_components/condair/*
+!tests/*
 !.pre-commit-config.yaml
 
 /config
