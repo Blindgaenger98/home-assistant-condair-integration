@@ -1,6 +1,6 @@
 /*
 !.gitignore
-*/custom_components/*
+!homeassistant/*
 !tests/*
 !.pre-commit-config.yaml
 
