@@ -138,6 +138,8 @@ class CondairHumidifierEntity(HumidifierEntity):
             self._is_on = True
             self._target_humidity = self._last_set_humidity  # Restore last set humidity
             self._last_update = datetime.now()
+            # Also update the target humidity
+            await self.async_set_humidity(self._last_set_humidity)
 
     async def async_turn_off(self, **kwargs) -> None:
         success = await self._api.set_on_off(self._unique_id, False)
