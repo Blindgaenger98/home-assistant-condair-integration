@@ -49,7 +49,24 @@ async def async_setup_entry(
             )
             continue
 
-        entities.append(CondairHumidifierEntity(api, unique_id, device_name))
+        try:
+            actions = await api.get_actions(unique_id)
+            if not actions:
+                _LOGGER.info(
+                    "Device %s has no actions available; skipping.", device_name
+                )
+                continue
+
+            entities.append(CondairHumidifierEntity(api, unique_id, device_name))
+        except Exception as e:
+            _LOGGER.error(
+                "Error fetching actions for device %s: %s", device_name, str(e)
+            )
+
+    if entities:
+        _LOGGER.info("Adding %d humidifier entities.", len(entities))
+    else:
+        _LOGGER.warning("No humidifier entities added; no valid devices found.")
 
     async_add_entities(entities, update_before_add=True)
 

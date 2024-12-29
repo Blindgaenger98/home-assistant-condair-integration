@@ -183,6 +183,24 @@ class CondairApi:
         _LOGGER.warning("Unexpected get_devices response: %s", resp)
         return []
 
+    async def get_parent_instances(self):
+        """Fetch parent instances (households)."""
+        endpoint = "/api/condair/sensor-instances?pageSize=999"
+        response = await self._get_request(endpoint)
+        parent_instances = {}
+
+        # Parse and group by parent instance
+        for device in response:
+            parent_instance_number = device.get("parentSerialNumber")
+            parent_instance_name = device.get("parentInstanceName")
+            if parent_instance_number not in parent_instances:
+                parent_instances[parent_instance_number] = {
+                    "parentInstanceNumber": parent_instance_number,
+                    "parentInstanceName": parent_instance_name,
+                }
+
+        return list(parent_instances.values())
+
     async def get_latest_datapoints(self, unique_id: str) -> dict:
         """GET /api/condair/sensor-instances/{unique_id}/latest-datapoint-values
         We'll parse:

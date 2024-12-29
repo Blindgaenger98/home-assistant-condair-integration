@@ -23,8 +23,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up temperature & humidity sensors for each Condair device."""
     api: CondairApi = hass.data[DOMAIN][entry.entry_id]
-
-    devices = await api.get_devices()  # Must be authorized by now
+    devices = await api.get_devices()
     sensor_entities = []
 
     for device in devices:
@@ -37,8 +36,35 @@ async def async_setup_entry(
             )
             continue
 
-        sensor_entities.append(CondairTemperatureSensor(api, unique_id, device_name))
-        sensor_entities.append(CondairHumiditySensor(api, unique_id, device_name))
+        try:
+            datapoints = await api.get_latest_datapoints(unique_id)
+            has_temp = datapoints["temperature_avg"] is not None
+            has_humidity = datapoints["humidity_avg"] is not None
+
+            if not has_temp and not has_humidity:
+                _LOGGER.info(
+                    "Device %s has no temperature or humidity data points; skipping.",
+                    device_name,
+                )
+                continue
+
+            if has_temp:
+                sensor_entities.append(
+                    CondairTemperatureSensor(api, unique_id, device_name)
+                )
+            if has_humidity:
+                sensor_entities.append(
+                    CondairHumiditySensor(api, unique_id, device_name)
+                )
+        except Exception as e:
+            _LOGGER.error(
+                "Error fetching datapoints for device %s: %s", device_name, str(e)
+            )
+
+    if sensor_entities:
+        _LOGGER.info("Adding %d sensor entities.", len(sensor_entities))
+    else:
+        _LOGGER.warning("No sensor entities added; no valid devices found.")
 
     async_add_entities(sensor_entities, update_before_add=True)
 
