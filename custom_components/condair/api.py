@@ -176,7 +176,7 @@ class CondairApi:
     # ---------------------------
     async def get_devices(self) -> list[dict]:
         await self.maybe_refresh_token()
-        endpoint = "api/condair/sensor-instances"
+        endpoint = "api/condair/sensor-instances?pageSize=999"
         resp = await self._get_request(endpoint)
         if isinstance(resp, dict) and "data" in resp:
             return resp["data"]
