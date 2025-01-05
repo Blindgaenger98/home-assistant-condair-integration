@@ -28,6 +28,11 @@ class CondairApi:
         self._refresh_token: str | None = None
         self._token_expires_at: float = 0.0
 
+        # REFRESH FALLBACK: User info (private)
+        self._username: str | None = None
+        self._password: str | None = None
+        # REFRESH FALLBACK END
+
     # ---------------------------
     # Basic session & request
     # ---------------------------
@@ -112,6 +117,11 @@ class CondairApi:
             self._access_token = resp["access_token"]
             self._refresh_token = resp["refresh_token"]
 
+            # REFRESH FALLBACK: Store user info
+            self._username = username
+            self._password = password
+            # REFRESH FALLBACK END
+
             expires_in_str = resp.get("expires_in", "3600")
             try:
                 expires_in = int(expires_in_str)
@@ -141,6 +151,12 @@ class CondairApi:
 
             if isinstance(resp, dict) and "error" in resp:
                 _LOGGER.error("Refresh token error: %s", resp)
+
+                # REFRESH FALLBACK: Try to re-authenticate
+                if self._username and self._password:
+                    _LOGGER.warning("Trying to re-authenticate.")
+                    return await self.authenticate(self._username, self._password)
+
                 return False
 
             self._access_token = resp.get("access_token")
