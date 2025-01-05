@@ -156,6 +156,9 @@ class CondairApi:
                 if self._username and self._password:
                     _LOGGER.warning("Trying to re-authenticate.")
                     return await self.authenticate(self._username, self._password)
+                else:
+                    _LOGGER.error("No username/password to re-authenticate.")
+                # REFRESH FALLBACK END
 
                 return False
 
